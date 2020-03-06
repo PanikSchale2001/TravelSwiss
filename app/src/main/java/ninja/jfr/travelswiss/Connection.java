@@ -4,39 +4,18 @@ import java.util.Date;
 
 public class Connection {
     private int id;
-    private String departureDestination;
+    private City departureDestination;
     private Date departureDate;
     private Date departureTime;
-    private String arrivalDestination;
+    private City arrivalDestination;
     private Date arrivalDate;
     private Date arrivalTime;
-    private City city;
+    private String departurePlatform;
+    private String arrivalPlatform;
     private boolean marked;
-    private  Connection[] connections;
     private int position;
 
-    public Connection(int id, String departureDestination, Date departureDate, Date departureTime, String arrivalDestination, Date arrivalDate, Date arrivalTime, boolean marked) {
-        this.id = id;
-        this.departureDestination = departureDestination;
-        this.departureDate = departureDate;
-        this.departureTime = departureTime;
-        this.arrivalDestination = arrivalDestination;
-        this.arrivalDate = arrivalDate;
-        this.arrivalTime = arrivalTime;
-        this.marked = marked;
-    }
-
-    public Connection(int id, String departureDestination, Date departureDate, Date departureTime, String arrivalDestination, Date arrivalDate, Date arrivalTime, boolean marked, Connection[] connections, int position) {
-        this.id = id;
-        this.departureDestination = departureDestination;
-        this.departureDate = departureDate;
-        this.departureTime = departureTime;
-        this.arrivalDestination = arrivalDestination;
-        this.arrivalDate = arrivalDate;
-        this.arrivalTime = arrivalTime;
-        this.marked = marked;
-        this.connections = connections;
-        this.position = position;
+    public Connection() {
     }
 
     public int getId() {
@@ -47,11 +26,11 @@ public class Connection {
         this.id = id;
     }
 
-    public String getDepartureDestination() {
+    public City getDepartureDestination() {
         return departureDestination;
     }
 
-    public void setDepartureDestination(String departureDestination) {
+    public void setDepartureDestination(City departureDestination) {
         this.departureDestination = departureDestination;
     }
 
@@ -71,11 +50,11 @@ public class Connection {
         this.departureTime = departureTime;
     }
 
-    public String getArrivalDestination() {
+    public City getArrivalDestination() {
         return arrivalDestination;
     }
 
-    public void setArrivalDestination(String arrivalDestination) {
+    public void setArrivalDestination(City arrivalDestination) {
         this.arrivalDestination = arrivalDestination;
     }
 
@@ -95,20 +74,28 @@ public class Connection {
         this.arrivalTime = arrivalTime;
     }
 
+    public String getDeparturePlatform() {
+        return departurePlatform;
+    }
+
+    public void setDeparturePlatform(String departurePlatform) {
+        this.departurePlatform = departurePlatform;
+    }
+
+    public String getArrivalPlatform() {
+        return arrivalPlatform;
+    }
+
+    public void setArrivalPlatform(String arrivalPlatform) {
+        this.arrivalPlatform = arrivalPlatform;
+    }
+
     public boolean isMarked() {
         return marked;
     }
 
     public void setMarked(boolean marked) {
         this.marked = marked;
-    }
-
-    public Connection[] getConnections() {
-        return connections;
-    }
-
-    public void setConnections(Connection[] connections) {
-        this.connections = connections;
     }
 
     public int getPosition() {
