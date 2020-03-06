@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
@@ -15,13 +17,26 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
+    /*
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+        }
+    }
+    */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button button = (Button) findViewById(R.id.search);
-        final TextView textView = (TextView) findViewById(R.id.testText);
+        Button button = findViewById(R.id.search);
+        final TextView textView = findViewById(R.id.testText);
 
 
         final Calendar calendarDate = Calendar.getInstance();
@@ -39,13 +54,16 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText from = (EditText) findViewById(R.id.textFrom);
-                EditText to = (EditText) findViewById(R.id.textTo);
-                EditText time = (EditText) findViewById(R.id.textTime);
+                EditText from = findViewById(R.id.textFrom);
+                String fromString = from.getText().toString();
+                EditText to = findViewById(R.id.textTo);
+                String toString = to.getText().toString();
+                EditText time = findViewById(R.id.textTime);
+                String timeString = time.getText().toString();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String date = sdf.format(calendarDate.getTime());
-                textView.setText(date);
+                String  date = sdf.format(calendarDate.getTime());
+                textView.setText("Date: "+date+" |from: "+fromString+" |to: "+toString+" |time: "+timeString);
             }
         });
     }
