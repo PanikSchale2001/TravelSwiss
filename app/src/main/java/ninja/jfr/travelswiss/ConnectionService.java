@@ -108,6 +108,8 @@ public class ConnectionService {
 
                 JSONObject arrivalStation = departure.getJSONObject("station");
                 connection.setDepartureDestination(new City(arrivalStation.getString("name"), arrivalStation.getDouble("x"), arrivalStation.getDouble("y"), arrivalStation.getInt("id")));
+                connection.setPosition(j);
+
                 listOfConnection.add(connection);
             }
             allConnections.add(listOfConnection);
