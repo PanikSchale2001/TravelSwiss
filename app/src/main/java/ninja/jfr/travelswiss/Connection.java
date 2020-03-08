@@ -3,7 +3,6 @@ package ninja.jfr.travelswiss;
 import java.util.Date;
 
 public class Connection {
-    private int id;
     private City departureDestination;
     private Date departureDate;
     private Date departureTime;
@@ -16,14 +15,6 @@ public class Connection {
     private int position;
 
     public Connection() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public City getDepartureDestination() {
