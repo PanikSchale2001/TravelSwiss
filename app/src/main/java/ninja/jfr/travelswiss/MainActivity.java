@@ -12,8 +12,14 @@ import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -63,6 +69,16 @@ public class MainActivity extends AppCompatActivity {
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 String  date = sdf.format(calendarDate.getTime());
+
+                try {
+                    List<List<Connection>> connections = new ConnectionService().getAllConnections(fromString, toString, date, timeString).get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+
                 textView.setText("Date: "+date+" |from: "+fromString+" |to: "+toString+" |time: "+timeString);
             }
         });

@@ -96,4 +96,20 @@ public class Connection {
     public void setPosition(int position) {
         this.position = position;
     }
+
+    @Override
+    public String toString() {
+        return "Connection{" +
+                "departureDestination=" + departureDestination +
+                ", departureDate=" + departureDate +
+                ", departureTime=" + departureTime +
+                ", arrivalDestination=" + arrivalDestination +
+                ", arrivalDate=" + arrivalDate +
+                ", arrivalTime=" + arrivalTime +
+                ", departurePlatform='" + departurePlatform + '\'' +
+                ", arrivalPlatform='" + arrivalPlatform + '\'' +
+                ", marked=" + marked +
+                ", position=" + position +
+                '}';
+    }
 }
