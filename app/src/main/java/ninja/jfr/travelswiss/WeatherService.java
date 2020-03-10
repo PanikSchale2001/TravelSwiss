@@ -11,29 +11,30 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
 
 public class WeatherService {
-    private ArrayList<Connection> ListOfConnections;
-    private String url;
-
     public WeatherService() throws IOException {
-        createUrl();
-        HttpURLConnection httpURLConnection = getApiConnection();
-
     }
 
-    public void createUrl(){
-        int sizeOfList = ListOfConnections.size();
-        Connection lastConnection = ListOfConnections.get(sizeOfList);
-
-        double xPos = lastConnection.getArrivalDestination().getxPos();
-        double yPos = lastConnection.getArrivalDestination().getyPos();
-
-        this.url = "api.openweathermap.org/data/2.5/weather?lat=" + xPos + "&lon=" + yPos + "&appid=f15635c569c4a58137e4977960782cfc";
+    public Future<List<Weather>> getWeather(final City city) {
+        return executorService.submit(() -> {
+            String url = getUrl(city);
+            HttpURLConnection apiConnection = getApiConnection(url);
+            return createWeather(apiConnection);
+        });
     }
 
-    public HttpURLConnection getApiConnection() throws IOException {
-        URL url = new URL(this.url);
+    public String getUrl(City city){
+        double xPos = city.getxPos();
+        double yPos = city.getyPos();
+
+        return "api.openweathermap.org/data/2.5/weather?lat=" + xPos + "&lon=" + yPos + "&appid=f15635c569c4a58137e4977960782cfc";
+    }
+
+    public HttpURLConnection getApiConnection(String urlString) throws IOException {
+        URL url = new URL(urlString);
 
         HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
         return httpConnection;
@@ -47,9 +48,5 @@ public class WeatherService {
         JSONObject object = new JSONObject(inputLine);
         JSONArray trainConnections = object.getJSONArray("connections");
 
-    }
-
-    public void setConnectionService(ArrayList<Connection> ListOfConnections) {
-        this.ListOfConnections = ListOfConnections;
     }
 }
