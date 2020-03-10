@@ -9,14 +9,7 @@ public class Weather {
     private double windspeed;
     private double rainPerHour;
 
-    public Weather(int id, City city, String weather, String description, double temperatur, double windspeed, double rainPerHour) {
-        this.id = id;
-        this.city = city;
-        this.weather = weather;
-        this.description = description;
-        this.temperatur = temperatur;
-        this.windspeed = windspeed;
-        this.rainPerHour = rainPerHour;
+    public Weather() {
     }
 
     public int getId() {
