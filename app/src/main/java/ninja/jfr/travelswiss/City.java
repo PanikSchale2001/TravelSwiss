@@ -45,4 +45,14 @@ public class City {
     public void setId(int id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "City{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", xPos=" + xPos +
+                ", yPos=" + yPos +
+                '}';
+    }
 }
