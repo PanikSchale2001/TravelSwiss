@@ -137,11 +137,11 @@ public class ConnectionService {
             }
 
             connections.add(listOfConnection);
-
         }
         WeatherService weatherService = new WeatherService();
         weatherService.getLastCity(connections);
     return  connections;
+
     }
 
     private Date parseTimeTimestamp(Long time) throws ParseException {

@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
-/*
+
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -41,14 +41,14 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
-*/
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        EditText date = findViewById(R.id.textDate);
+        TextView date = findViewById(R.id.textDate);
         date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        EditText time = findViewById(R.id.textTime);
+        TextView time = findViewById(R.id.textTime);
         time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,8 +83,8 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onTimeSet(TimePicker tp, int sHour, int sMinute) {
                                 TextView text = findViewById(R.id.testText);
-                                text.setText(hour + ":" + minute);
-                                time.setText(hour + ":" + minute);
+                                text.setText(sHour + ":" + sMinute);
+                                time.setText(sHour + ":" + sMinute);
                             }
                         }, hour, minute, true);
                 picker.show();
@@ -100,9 +100,9 @@ public class MainActivity extends AppCompatActivity {
                 String fromString = from.getText().toString();
                 EditText to = findViewById(R.id.textTo);
                 String toString = to.getText().toString();
-                EditText time = findViewById(R.id.textTime);
+                TextView time = findViewById(R.id.textTime);
                 String timeString = time.getText().toString();
-                EditText date = findViewById(R.id.textDate);
+                TextView date = findViewById(R.id.textDate);
                 String dateString = date.getText().toString();
                 /*
                 try {
