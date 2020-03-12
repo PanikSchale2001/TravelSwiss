@@ -1,6 +1,6 @@
 package ninja.jfr.travelswiss;
 
-import android.net.UrlQuerySanitizer;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,17 +15,24 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class ConnectionService {
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    private ArrayList<ArrayList> allConnections = new ArrayList<>();
-    private ArrayList<Connection> listOfConnection;
+    public ConnectionService() {
 
-    public ConnectionService(String from, String to, String date, String time) throws ParseException, IOException, JSONException {
-        String url = getUrl(from, to, date, time);
-        HttpURLConnection apiConnection = getApiConnection(url);
-        createConnection(apiConnection);
+    }
 
+    public Future<List<List<Connection>>> getAllConnections(String from, String to, String date, String time) {
+        return executorService.submit(() -> {
+            String url = getUrl(from, to, date, time);
+            HttpURLConnection apiConnection = getApiConnection(url);
+            return createConnection(apiConnection);
+        });
     }
 
     public String getUrl(String from, String to, String date, String time) throws ParseException {
@@ -36,14 +43,14 @@ public class ConnectionService {
 
         if (date == null){
             if (time == null){
-                url = "http://transport.opendata.ch/v1/connections?from=" + from + "&to=" + to;
+                url = "https://transport.opendata.ch/v1/connections?from=" + from + "&to=" + to;
             } else{
-                url = "http://transport.opendata.ch/v1/connections?from=" + from + "&to=" + to + "&time" + formatedTime;
+                url = "https://transport.opendata.ch/v1/connections?from=" + from + "&to=" + to + "&time" + formatedTime;
             }
         } else if (time == null){
-            url = "http://transport.opendata.ch/v1/connections?from=" + from + "&to=" + to + "&date" + formatedDate;
+            url = "https://transport.opendata.ch/v1/connections?from=" + from + "&to=" + to + "&date" + formatedDate;
         } else {
-            url = "http://transport.opendata.ch/v1/connections?from=" + from + "&to=" + to + "&date" + formatedDate + "&time" + formatedTime;
+            url = "https://transport.opendata.ch/v1/connections?from=" + from + "&to=" + to + "&date" + formatedDate + "&time" + formatedTime;
         }
 
         return  url;
@@ -56,7 +63,7 @@ public class ConnectionService {
         return httpConnection;
     }
 
-    public void createConnection(HttpURLConnection httpConnection) throws IOException, JSONException, ParseException {
+    public List<List<Connection>> createConnection(HttpURLConnection httpConnection) throws IOException, JSONException, ParseException {
         int respondeCode = httpConnection.getResponseCode();
 
         BufferedReader input = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
@@ -64,9 +71,11 @@ public class ConnectionService {
         JSONObject object = new JSONObject(inputLine);
         JSONArray trainConnections = object.getJSONArray("connections");
 
-        for (int i = 0; i < 4 ; i++){
+        List<List<Connection>> connections = new ArrayList<>();
 
-            listOfConnection = new ArrayList<>();
+        for (int i = 0; i < 4 && i < trainConnections.length() ; i++){
+
+            List<Connection> listOfConnection = new ArrayList<>();
 
             JSONObject trainConnection = trainConnections.getJSONObject(i);
             JSONArray sections = trainConnection.getJSONArray("sections");
@@ -75,13 +84,13 @@ public class ConnectionService {
 
                 Connection connection = new Connection();
 
-                JSONObject section = sections.getJSONObject(i);
+                JSONObject section = sections.getJSONObject(j);
                 JSONObject departure = section.getJSONObject("departure");
 
                 // Departure
                 if (!departure.isNull("departureTimestamp")){
-                     connection.setDepartureDate(parseDateTimestamp(departure.getLong("departureTimestamp")));
-                     connection.setDepartureTime(parseTimeTimestamp(departure.getLong("departureTimestamp")));
+                     connection.setDepartureDate(new Date((departure.getLong("departureTimestamp"))));
+                     connection.setDepartureTime(new Date((departure.getLong("departureTimestamp"))));
                 }
                 if (departure.isNull("platform")){
                     connection.setDeparturePlatform("N/A");
@@ -90,15 +99,19 @@ public class ConnectionService {
                 }
 
                 JSONObject departureStation = departure.getJSONObject("station");
-                connection.setDepartureDestination(new City(departureStation.getString("name"), departureStation.getDouble("x"), departureStation.getDouble("y"), departureStation.getInt("id")));
+
+                if (departureStation != null) {
+                    JSONObject coordinate = departureStation.getJSONObject("coordinate");
+
+                    connection.setDepartureDestination(new City(departureStation.getString("name"), coordinate.getDouble("x"), coordinate.getDouble("y"), departureStation.getInt("id")));
+                }
 
                 //Arrival
                 JSONObject arrival = section.getJSONObject("arrival");
 
-                // Departure
-                if (!departure.isNull("arrivalTimestamp")){
-                    connection.setArrivalDate(parseDateTimestamp(departure.getLong("arrivalTimestamp")));
-                    connection.setArrivalTime(parseTimeTimestamp(departure.getLong("arrivalTimestamp")));
+                if (!arrival.isNull("arrivalTimestamp")){
+                    connection.setArrivalDate(new Date(arrival.getLong("arrivalTimestamp")));
+                    connection.setArrivalTime(new Date(arrival.getLong("arrivalTimestamp")));
                 }
                 if (arrival.isNull("platform")){
                     connection.setArrivalPlatform("N/A");
@@ -107,11 +120,20 @@ public class ConnectionService {
                 }
 
                 JSONObject arrivalStation = departure.getJSONObject("station");
-                connection.setDepartureDestination(new City(arrivalStation.getString("name"), arrivalStation.getDouble("x"), arrivalStation.getDouble("y"), arrivalStation.getInt("id")));
+                Log.e("ww", arrivalStation.toString());
+
+                if (arrivalStation != null) {
+                    JSONObject coordinate = arrivalStation.getJSONObject("coordinate");
+
+                    connection.setArrivalDestination(new City(arrivalStation.getString("name"), coordinate.getDouble("x"), coordinate.getDouble("y"), arrivalStation.getInt("id")));
+                }
+
                 connection.setPosition(j);
+                Log.e("dd", connection.toString());
 
                 listOfConnection.add(connection);
             }
+
             allConnections.add(listOfConnection);
             WeatherService weatherService = new WeatherService();
             weatherService.getLastCity(listOfConnection);
@@ -128,13 +150,11 @@ public class ConnectionService {
         return formatetTime;
     }
 
-    public Date parseDateTimestamp(Long date) throws ParseException {
+    public Date parseTimestamp(Long date) throws ParseException {
         String pattern = "yyyy-MM-dd";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 
-        Date formatetDate = simpleDateFormat.parse(String.valueOf(new Date(date)));
-
-        return formatetDate;
+        return new Date(date);
     }
 
     private Date parseTime(String time) throws ParseException {
