@@ -9,14 +9,7 @@ public class Weather {
     private double windspeed;
     private double rainPerHour;
 
-    public Weather(int id, City city, String weather, String description, double temperatur, double windspeed, double rainPerHour) {
-        this.id = id;
-        this.city = city;
-        this.weather = weather;
-        this.description = description;
-        this.temperatur = temperatur;
-        this.windspeed = windspeed;
-        this.rainPerHour = rainPerHour;
+    public Weather() {
     }
 
     public int getId() {
@@ -73,5 +66,18 @@ public class Weather {
 
     public void setRainPerHour(double rainPerHour) {
         this.rainPerHour = rainPerHour;
+    }
+
+    @Override
+    public String toString() {
+        return "Weather{" +
+                "id=" + id +
+                ", city=" + city +
+                ", weather='" + weather + '\'' +
+                ", description='" + description + '\'' +
+                ", temperatur=" + temperatur +
+                ", windspeed=" + windspeed +
+                ", rainPerHour=" + rainPerHour +
+                '}';
     }
 }

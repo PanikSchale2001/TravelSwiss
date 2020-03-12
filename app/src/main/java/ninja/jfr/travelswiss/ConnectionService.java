@@ -133,10 +133,21 @@ public class ConnectionService {
 
                 listOfConnection.add(connection);
             }
-            connections.add(listOfConnection);
+
+            allConnections.add(listOfConnection);
+            WeatherService weatherService = new WeatherService();
+            weatherService.getLastCity(listOfConnection);
         }
 
-        return connections;
+    }
+
+    private Date parseTimeTimestamp(Long time) throws ParseException {
+        String pattern = "HH:mm";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+
+        Date formatetTime = simpleDateFormat.parse(String.valueOf(new Date(time)));
+
+        return formatetTime;
     }
 
     public Date parseTimestamp(Long date) throws ParseException {
