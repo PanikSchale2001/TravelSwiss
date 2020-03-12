@@ -113,8 +113,9 @@ public class ConnectionService {
                 listOfConnection.add(connection);
             }
             allConnections.add(listOfConnection);
+            WeatherService weatherService = new WeatherService();
+            weatherService.getLastCity(listOfConnection);
         }
-
 
     }
 
