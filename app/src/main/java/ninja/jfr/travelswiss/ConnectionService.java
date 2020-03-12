@@ -134,11 +134,12 @@ public class ConnectionService {
                 listOfConnection.add(connection);
             }
 
-            allConnections.add(listOfConnection);
+            connections.add(listOfConnection);
             WeatherService weatherService = new WeatherService();
-            weatherService.getLastCity(listOfConnection);
-        }
+           // weatherService.getLastCity(listOfConnection);
 
+        }
+        return null;
     }
 
     private Date parseTimeTimestamp(Long time) throws ParseException {
