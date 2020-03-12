@@ -1,6 +1,7 @@
 package ninja.jfr.travelswiss;
 
-import org.json.JSONArray;
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,7 +12,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -21,6 +21,12 @@ public class WeatherService {
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public WeatherService() throws IOException {
+    }
+
+    public void getLastCity(ArrayList<Connection> connections){
+        int size = connections.size();
+        Connection lastConnection = connections.get(size);
+        getWeather(lastConnection.getArrivalDestination());
     }
 
     public Future<Weather> getWeather(City city) {
@@ -68,6 +74,7 @@ public class WeatherService {
         JSONObject rainObject = object.getJSONObject("rain");
         weather.setRainPerHour(rainObject.getDouble("1h"));
 
+        Log.e("test", weather.toString());
         return weather;
     }
 }

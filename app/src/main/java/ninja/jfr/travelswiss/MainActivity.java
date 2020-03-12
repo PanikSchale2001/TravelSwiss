@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 String  date = sdf.format(calendarDate.getTime());
                 textView.setText("Date: "+date+" |from: "+fromString+" |to: "+toString+" |time: "+timeString);
+
+
             }
         });
     }

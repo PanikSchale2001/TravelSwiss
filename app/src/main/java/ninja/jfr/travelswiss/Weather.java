@@ -67,4 +67,17 @@ public class Weather {
     public void setRainPerHour(double rainPerHour) {
         this.rainPerHour = rainPerHour;
     }
+
+    @Override
+    public String toString() {
+        return "Weather{" +
+                "id=" + id +
+                ", city=" + city +
+                ", weather='" + weather + '\'' +
+                ", description='" + description + '\'' +
+                ", temperatur=" + temperatur +
+                ", windspeed=" + windspeed +
+                ", rainPerHour=" + rainPerHour +
+                '}';
+    }
 }

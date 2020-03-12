@@ -113,7 +113,10 @@ public class ConnectionService {
                 listOfConnection.add(connection);
             }
             allConnections.add(listOfConnection);
+            WeatherService weatherService = new WeatherService();
+            weatherService.getLastCity(listOfConnection);
         }
+
     }
 
     private Date parseTimeTimestamp(Long time) throws ParseException {
