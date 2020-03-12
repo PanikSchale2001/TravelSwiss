@@ -87,4 +87,25 @@
         app:layout_constraintTop_toBottomOf="@+id/textTime" />
 
 
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/connectionFragment"
+        tools:ignore="MissingConstraints" />
+
+    <fragment
+        android:id="@+id/connectionFragment"
+        android:name="ninja.jfr.travelswiss.ConnectionFragment"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/testText" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
