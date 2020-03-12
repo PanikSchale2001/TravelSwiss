@@ -2,6 +2,8 @@ package ninja.jfr.travelswiss;
 
 import android.util.Log;
 
+import net.aksingh.owmjapis.api.APIException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,7 +65,7 @@ public class ConnectionService {
         return httpConnection;
     }
 
-    public List<List<Connection>> createConnection(HttpURLConnection httpConnection) throws IOException, JSONException, ParseException {
+    public List<List<Connection>> createConnection(HttpURLConnection httpConnection) throws IOException, JSONException, ParseException, APIException {
         int respondeCode = httpConnection.getResponseCode();
 
         BufferedReader input = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
@@ -89,8 +91,8 @@ public class ConnectionService {
 
                 // Departure
                 if (!departure.isNull("departureTimestamp")){
-                     connection.setDepartureDate(new Date((departure.getLong("departureTimestamp"))));
-                     connection.setDepartureTime(new Date((departure.getLong("departureTimestamp"))));
+                    connection.setDepartureDate(new Date((departure.getLong("departureTimestamp"))));
+                    connection.setDepartureTime(new Date((departure.getLong("departureTimestamp"))));
                 }
                 if (departure.isNull("platform")){
                     connection.setDeparturePlatform("N/A");
@@ -119,7 +121,7 @@ public class ConnectionService {
                     connection.setArrivalPlatform(arrival.getString("platform"));
                 }
 
-                JSONObject arrivalStation = departure.getJSONObject("station");
+                JSONObject arrivalStation = arrival.getJSONObject("station");
                 Log.e("ww", arrivalStation.toString());
 
                 if (arrivalStation != null) {
@@ -135,11 +137,11 @@ public class ConnectionService {
             }
 
             connections.add(listOfConnection);
-            WeatherService weatherService = new WeatherService();
-           // weatherService.getLastCity(listOfConnection);
-
         }
-        return null;
+        WeatherService weatherService = new WeatherService();
+        weatherService.getLastCity(connections);
+    return  connections;
+
     }
 
     private Date parseTimeTimestamp(Long time) throws ParseException {

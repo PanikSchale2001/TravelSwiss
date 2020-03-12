@@ -2,6 +2,10 @@ package ninja.jfr.travelswiss;
 
 import android.util.Log;
 
+import net.aksingh.owmjapis.api.APIException;
+import net.aksingh.owmjapis.core.OWM;
+import net.aksingh.owmjapis.model.CurrentWeather;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -23,58 +28,38 @@ public class WeatherService {
     public WeatherService() throws IOException {
     }
 
-    public void getLastCity(ArrayList<Connection> connections){
-        int size = connections.size();
-        Connection lastConnection = connections.get(size);
-        getWeather(lastConnection.getArrivalDestination());
+    public void getLastCity(List<List<Connection>> connections) throws APIException {
+        for (int i = 0;i<connections.size();i++){
+            List<Connection> connection = connections.get(i);
+            Connection lastConnection = null;
+            for (int j = 0; j< connection.size(); j++){
+                lastConnection= connection.get(j);
+            }
+            Weather weather = getWeather(lastConnection.getArrivalDestination());
+        }
+
     }
 
-    public Future<Weather> getWeather(City city) {
-        return executorService.submit(() -> {
-            String url = getUrl(city);
-            HttpURLConnection apiConnection = getApiConnection(url);
-            return createWeather(apiConnection, city);
-        });
-    }
+    public Weather getWeather(City city) throws APIException {
 
-    public String getUrl(City city){
-        double xPos = city.getxPos();
-        double yPos = city.getyPos();
+            OWM owm = new OWM("f15635c569c4a58137e4977960782cfc");
+            owm.setUnit(OWM.Unit.METRIC);
+            CurrentWeather currentWeather = owm.currentWeatherByCoords(city.getxPos(), city.getyPos());
+            Weather weather = new Weather();
+            weather.setCity(city);
+            weather.setId(currentWeather.getWeatherList().get(0).getConditionId());
+            weather.setWeather(currentWeather.getWeatherList().get(0).getMainInfo());
+            weather.setDescription(currentWeather.getWeatherList().get(0).getDescription());
+            weather.setTemperatur(currentWeather.getMainData().getTemp());
+            weather.setWindspeed(currentWeather.getWindData().getSpeed());
 
-        return "api.openweathermap.org/data/2.5/weather?lat=" + xPos + "&lon=" + yPos + "&appid=f15635c569c4a58137e4977960782cfc";
-    }
+            if (currentWeather.getRainData() != null){
+                weather.setRainPerHour(currentWeather.getRainData().getPrecipVol3h());
+            } else{
+                weather.setRainPerHour(0);
+            }
 
-    public HttpURLConnection getApiConnection(String urlString) throws IOException {
-        URL url = new URL(urlString);
-
-        HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
-        return httpConnection;
-    }
-
-    public Weather createWeather(HttpURLConnection httpConnection, City city) throws IOException, JSONException, ParseException {
-        int respondeCode = httpConnection.getResponseCode();
-
-        BufferedReader input = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
-        String inputLine = input.readLine();
-        JSONObject object = new JSONObject(inputLine);
-        JSONObject weatherObject = object.getJSONObject("weather");
-
-        Weather weather = new Weather();
-        weather.setCity(city);
-        weather.setId(weatherObject.getInt("id"));
-        weather.setWeather(weatherObject.getString("main"));
-        weather.setDescription(weatherObject.getString("description"));
-
-        JSONObject mainObject = object.getJSONObject("main");
-        weather.setTemperatur(mainObject.getDouble("temp"));
-
-        JSONObject windObject = object.getJSONObject("wind");
-        weather.setWindspeed(windObject.getDouble("speed"));
-
-        JSONObject rainObject = object.getJSONObject("rain");
-        weather.setRainPerHour(rainObject.getDouble("1h"));
-
-        Log.e("test", weather.toString());
-        return weather;
+            Log.d("SoySauce", weather.toString());
+            return weather;
     }
 }

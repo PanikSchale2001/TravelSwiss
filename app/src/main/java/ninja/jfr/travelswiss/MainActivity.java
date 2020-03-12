@@ -114,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 */
                 Log.e("from", fromString +" "+toString+" "+timeString+" "+dateString);
+                ConnectionService connectionService = new ConnectionService();
+                connectionService.getAllConnections(fromString,toString,dateString,timeString);
                 launchActivity(fromString, toString, timeString, dateString);
 
             }
