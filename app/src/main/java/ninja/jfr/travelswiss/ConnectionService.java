@@ -18,6 +18,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -26,7 +28,6 @@ public class ConnectionService {
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public ConnectionService() {
-
     }
 
     public Future<List<List<Connection>>> getAllConnections(String from, String to, String date, String time) {
@@ -40,19 +41,17 @@ public class ConnectionService {
     public String getUrl(String from, String to, String date, String time) throws ParseException {
 
         String url = "";
-        Date formatedDate = parseDate(date);
-        Date formatedTime = parseTime(time);
 
         if (date == null){
             if (time == null){
                 url = "https://transport.opendata.ch/v1/connections?from=" + from + "&to=" + to;
             } else{
-                url = "https://transport.opendata.ch/v1/connections?from=" + from + "&to=" + to + "&time" + formatedTime;
+                url = "https://transport.opendata.ch/v1/connections?from=" + from + "&to=" + to + "&time" + time;
             }
         } else if (time == null){
-            url = "https://transport.opendata.ch/v1/connections?from=" + from + "&to=" + to + "&date" + formatedDate;
+            url = "https://transport.opendata.ch/v1/connections?from=" + from + "&to=" + to + "&date" + date;
         } else {
-            url = "https://transport.opendata.ch/v1/connections?from=" + from + "&to=" + to + "&date" + formatedDate + "&time" + formatedTime;
+            url = "https://transport.opendata.ch/v1/connections?from=" + from + "&to=" + to + "&date" + date + "&time" + time;
         }
 
         return  url;
@@ -60,7 +59,7 @@ public class ConnectionService {
 
     public HttpURLConnection getApiConnection(String urlString) throws IOException {
         URL url = new URL(urlString);
-
+    Log.e("jdsfjf", urlString);
         HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
         return httpConnection;
     }
@@ -90,9 +89,9 @@ public class ConnectionService {
                 JSONObject departure = section.getJSONObject("departure");
 
                 // Departure
-                if (!departure.isNull("departureTimestamp")){
-                    connection.setDepartureDate(new Date((departure.getLong("departureTimestamp"))));
-                    connection.setDepartureTime(new Date((departure.getLong("departureTimestamp"))));
+                if (!departure.isNull("departure")){
+                     connection.setDepartureDate(parseTime(departure.getString("departure")));
+
                 }
                 if (departure.isNull("platform")){
                     connection.setDeparturePlatform("N/A");
@@ -111,9 +110,8 @@ public class ConnectionService {
                 //Arrival
                 JSONObject arrival = section.getJSONObject("arrival");
 
-                if (!arrival.isNull("arrivalTimestamp")){
-                    connection.setArrivalDate(new Date(arrival.getLong("arrivalTimestamp")));
-                    connection.setArrivalTime(new Date(arrival.getLong("arrivalTimestamp")));
+                if (!arrival.isNull("arrival")){
+                    connection.setArrivalDate(parseTime(arrival.getString("arrival")));
                 }
                 if (arrival.isNull("platform")){
                     connection.setArrivalPlatform("N/A");
@@ -137,44 +135,24 @@ public class ConnectionService {
             }
 
             connections.add(listOfConnection);
+
         }
-        WeatherService weatherService = new WeatherService();
-        weatherService.getLastCity(connections);
-    return  connections;
+        return connections;
 
     }
 
-    private Date parseTimeTimestamp(Long time) throws ParseException {
-        String pattern = "HH:mm";
+
+    public String parseTime(String date) throws ParseException {
+        String pattern = "yyyy-MM-dd'T'HH:mm:ssZ";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GTM"));
+        Date fullFormatetTime = simpleDateFormat.parse(date);
 
-        Date formatetTime = simpleDateFormat.parse(String.valueOf(new Date(time)));
+        String timePattern = "HH:mm";
+        SimpleDateFormat timeFormatter = new SimpleDateFormat(timePattern);
 
-        return formatetTime;
-    }
 
-    public Date parseTimestamp(Long date) throws ParseException {
-        String pattern = "yyyy-MM-dd";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        return timeFormatter.format(fullFormatetTime);
 
-        return new Date(date);
-    }
-
-    private Date parseTime(String time) throws ParseException {
-        String pattern = "HH:mm";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-
-        Date formatetTime = simpleDateFormat.parse(time);
-
-        return formatetTime;
-    }
-
-    public Date parseDate(String date) throws ParseException {
-        String pattern = "yyyy-MM-dd";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-
-        Date formatetDate = simpleDateFormat.parse(date);
-
-        return formatetDate;
     }
 }
