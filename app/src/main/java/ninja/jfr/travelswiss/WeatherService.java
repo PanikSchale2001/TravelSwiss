@@ -2,9 +2,9 @@ package ninja.jfr.travelswiss;
 
 import android.util.Log;
 
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -51,11 +52,8 @@ public class WeatherService {
 
     public HttpURLConnection getApiConnection(String urlString) throws IOException {
         URL url = new URL(urlString);
-
-        HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
-        return httpConnection;
     }
-
+  
     public Weather createWeather(HttpURLConnection httpConnection, City city) throws IOException, JSONException, ParseException {
         int respondeCode = httpConnection.getResponseCode();
 

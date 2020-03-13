@@ -2,6 +2,8 @@ package ninja.jfr.travelswiss;
 
 import android.util.Log;
 
+import net.aksingh.owmjapis.api.APIException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,7 +64,7 @@ public class ConnectionService {
         return httpConnection;
     }
 
-    public List<List<Connection>> createConnection(HttpURLConnection httpConnection) throws IOException, JSONException, ParseException {
+    public List<List<Connection>> createConnection(HttpURLConnection httpConnection) throws IOException, JSONException, ParseException, APIException {
         int respondeCode = httpConnection.getResponseCode();
 
         BufferedReader input = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
@@ -89,6 +91,7 @@ public class ConnectionService {
                 // Departure
                 if (!departure.isNull("departure")){
                      connection.setDepartureDate(parseTime(departure.getString("departure")));
+
                 }
                 if (departure.isNull("platform")){
                     connection.setDeparturePlatform("N/A");
@@ -135,6 +138,7 @@ public class ConnectionService {
 
         }
         return connections;
+
     }
 
 
