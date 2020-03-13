@@ -4,11 +4,9 @@ import java.util.Date;
 
 public class Connection {
     private City departureDestination;
-    private Date departureDate;
-    private Date departureTime;
+    private String departureDate;
     private City arrivalDestination;
-    private Date arrivalDate;
-    private Date arrivalTime;
+    private String arrivalDate;
     private String departurePlatform;
     private String arrivalPlatform;
     private boolean marked;
@@ -25,20 +23,12 @@ public class Connection {
         this.departureDestination = departureDestination;
     }
 
-    public Date getDepartureDate() {
+    public String getDepartureDate() {
         return departureDate;
     }
 
-    public void setDepartureDate(Date departureDate) {
+    public void setDepartureDate(String departureDate) {
         this.departureDate = departureDate;
-    }
-
-    public Date getDepartureTime() {
-        return departureTime;
-    }
-
-    public void setDepartureTime(Date departureTime) {
-        this.departureTime = departureTime;
     }
 
     public City getArrivalDestination() {
@@ -49,20 +39,12 @@ public class Connection {
         this.arrivalDestination = arrivalDestination;
     }
 
-    public Date getArrivalDate() {
+    public String getArrivalDate() {
         return arrivalDate;
     }
 
-    public void setArrivalDate(Date arrivalDate) {
+    public void setArrivalDate(String arrivalDate) {
         this.arrivalDate = arrivalDate;
-    }
-
-    public Date getArrivalTime() {
-        return arrivalTime;
-    }
-
-    public void setArrivalTime(Date arrivalTime) {
-        this.arrivalTime = arrivalTime;
     }
 
     public String getDeparturePlatform() {
@@ -102,10 +84,8 @@ public class Connection {
         return "Connection{" +
                 "departureDestination=" + departureDestination +
                 ", departureDate=" + departureDate +
-                ", departureTime=" + departureTime +
                 ", arrivalDestination=" + arrivalDestination +
                 ", arrivalDate=" + arrivalDate +
-                ", arrivalTime=" + arrivalTime +
                 ", departurePlatform='" + departurePlatform + '\'' +
                 ", arrivalPlatform='" + arrivalPlatform + '\'' +
                 ", marked=" + marked +

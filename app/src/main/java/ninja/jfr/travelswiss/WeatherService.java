@@ -2,6 +2,10 @@ package ninja.jfr.travelswiss;
 
 import android.util.Log;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,6 +36,7 @@ public class WeatherService {
     public Future<Weather> getWeather(City city) {
         return executorService.submit(() -> {
             String url = getUrl(city);
+            Log.e("lkdjgldfkg", url);
             HttpURLConnection apiConnection = getApiConnection(url);
             return createWeather(apiConnection, city);
         });
@@ -41,7 +46,7 @@ public class WeatherService {
         double xPos = city.getxPos();
         double yPos = city.getyPos();
 
-        return "api.openweathermap.org/data/2.5/weather?lat=" + xPos + "&lon=" + yPos + "&appid=f15635c569c4a58137e4977960782cfc";
+        return "https://api.openweathermap.org/data/2.5/weather?lat=" + xPos + "&lon=" + yPos + "&appid=f15635c569c4a58137e4977960782cfc";
     }
 
     public HttpURLConnection getApiConnection(String urlString) throws IOException {
@@ -57,7 +62,9 @@ public class WeatherService {
         BufferedReader input = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
         String inputLine = input.readLine();
         JSONObject object = new JSONObject(inputLine);
-        JSONObject weatherObject = object.getJSONObject("weather");
+        JSONArray weatherArray = object.getJSONArray("weather");
+        JSONObject weatherObject = weatherArray.getJSONObject(0);
+
 
         Weather weather = new Weather();
         weather.setCity(city);
@@ -71,9 +78,12 @@ public class WeatherService {
         JSONObject windObject = object.getJSONObject("wind");
         weather.setWindspeed(windObject.getDouble("speed"));
 
-        JSONObject rainObject = object.getJSONObject("rain");
-        weather.setRainPerHour(rainObject.getDouble("1h"));
-
+        if (object.isNull("rain")){
+            weather.setRainPerHour(0);
+        } else {
+            JSONObject rainObject = object.getJSONObject("rain");
+            weather.setRainPerHour(rainObject.getDouble("1h"));
+        }
         Log.e("test", weather.toString());
         return weather;
     }
